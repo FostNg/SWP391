@@ -101,6 +101,7 @@ public class UserImpl implements UserService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public UserResponse setStatusAccount(Long userId, String decision) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.INVALID_USERID));
         user.setStatus(!decision.equalsIgnoreCase("inactive"));
@@ -108,8 +109,45 @@ public class UserImpl implements UserService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public UserResponse setRole(Long userId, String role) {
-        return null;
-    }
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.INVALID_USERID));
+        RoleDetail roleDetail;
 
-}
+        switch (role.toLowerCase()) {
+            case "user":
+            case "staff":
+            case "consultant":
+            case "manager":
+                // Gán thêm role
+                String roleName = "ROLE_" + role.toUpperCase();
+
+                roleDetail = roleRepository.findByRoleType(roleName)
+                        .orElseGet(() -> {
+                            RoleDetail newRole = new RoleDetail();
+                            newRole.setRoleType(roleName);
+                            return roleRepository.save(newRole);
+                        });
+
+                user.getRoles().add(roleDetail);
+                break;
+
+            case "unuser":
+            case "unstaff":
+            case "unconsultant":
+            case "unmanager":
+                // Gỡ role
+                String removeRole = "ROLE_" + role.replace("un", "").toUpperCase();
+
+                user.getRoles().removeIf(r ->
+                        r.getRoleType().equalsIgnoreCase(removeRole));
+                break;
+
+            default:
+                throw new AppException(ErrorCode.INVALID_ROLE);
+        }
+
+        userRepository.save(user);
+        return userMapper.mapToUserResponse(user);
+
+    }

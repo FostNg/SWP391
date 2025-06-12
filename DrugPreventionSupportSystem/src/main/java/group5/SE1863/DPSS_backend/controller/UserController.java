@@ -65,4 +65,10 @@ public class UserController {
         apiResponse.setResult(userService.setStatusAccount(userId, decision));
         return apiResponse;
     }
+    @PutMapping("/setRole/{userId}")
+    public ApiResponse<UserResponse> setRole(@PathVariable("userId") Long userId, @RequestParam String role) {
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.setRole(userId, role));
+        return apiResponse;
+    }
 }
