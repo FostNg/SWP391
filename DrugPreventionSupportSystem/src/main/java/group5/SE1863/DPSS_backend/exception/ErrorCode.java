@@ -9,16 +9,16 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum ErrorCode {
     INVALID_KEY(1000, "Invalid message key", HttpStatus.BAD_REQUEST),
-    UNCATAGORIZED_EXCEPTION(9999,"Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
+    UNCATAGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_EXISTED(1001, "User existed(please check your username or your email)", HttpStatus.BAD_REQUEST),
     INVALID_ROLE(1002, "Invalid role", HttpStatus.BAD_REQUEST),
-    USER_NOT_EXISTED(1004, "User invalid(please check your username or your password)",HttpStatus.NOT_FOUND),
-    UNAUTHENDICATED (1005,"Unauthenticated",HttpStatus.UNAUTHORIZED),
+    INVALID_USERID(1003, "This userID is not existed", HttpStatus.BAD_REQUEST),
+    USER_NOT_EXISTED(1004, "User invalid(please check your username or your password)", HttpStatus.NOT_FOUND),
+    UNAUTHENDICATED(1005, "Unauthenticated", HttpStatus.UNAUTHORIZED),
 
 
-    INVALID_INFOMATION(1007,"You need to check your information that it do not duplicated",HttpStatus.BAD_REQUEST),
+    INVALID_INFOMATION(1007, "You need to check your information that it do not duplicated", HttpStatus.BAD_REQUEST),
     ;
-
 
 
     private int code;

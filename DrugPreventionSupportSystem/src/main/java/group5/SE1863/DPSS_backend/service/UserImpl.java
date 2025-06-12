@@ -102,7 +102,9 @@ public class UserImpl implements UserService {
 
     @Override
     public UserResponse setStatusAccount(Long userId, String decision) {
-        return null;
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.INVALID_USERID));
+        user.setStatus(!decision.equalsIgnoreCase("inactive"));
+        return userMapper.mapToUserResponse(userRepository.save(user));
     }
 
     @Override

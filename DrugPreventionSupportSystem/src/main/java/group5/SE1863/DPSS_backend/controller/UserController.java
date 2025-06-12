@@ -59,4 +59,10 @@ public class UserController {
         apiResponse.setResult("User deleted successfully");
         return apiResponse;
     }
+    @PostMapping("/setStatusAccount/{userId}")
+    public ApiResponse<UserResponse> setActiveAccount(@PathVariable("userId") Long userId, @RequestParam String decision) {
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.setStatusAccount(userId, decision));
+        return apiResponse;
+    }
 }
