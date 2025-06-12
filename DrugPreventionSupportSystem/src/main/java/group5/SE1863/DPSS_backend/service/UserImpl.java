@@ -43,12 +43,11 @@ public class UserImpl implements UserService {
         HashSet<RoleDetail> roles = new HashSet<>();
         try {
             Role roleEnum = Role.valueOf(userRoleChoice.toUpperCase());
-            RoleDetail role = roleRepository.findByRoleType(roleEnum.name())
-                    .orElseGet(() -> {
-                        RoleDetail newRole = new RoleDetail();
-                        newRole.setRoleType(roleEnum.name());
-                        return roleRepository.save(newRole);
-                    });
+            RoleDetail role = roleRepository.findByRoleType(roleEnum.name()).orElseGet(() -> {
+                RoleDetail newRole = new RoleDetail();
+                newRole.setRoleType(roleEnum.name());
+                return roleRepository.save(newRole);
+            });
             roles.add(role);
             user.setRoles(roles);
         } catch (IllegalArgumentException e) {
@@ -60,9 +59,15 @@ public class UserImpl implements UserService {
 
     @Override
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public List<UserResponse> getAllUser() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(UserMapper::mapToUserResponse).toList();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public UserResponse getUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return UserMapper.mapToUserResponse(user);
     }
 
@@ -71,27 +76,38 @@ public class UserImpl implements UserService {
         var context = SecurityContextHolder.getContext();
         Long userId = Long.valueOf(context.getAuthentication().getName());
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return UserMapper.mapToUserResponse(user);
 
     }
 
     @Override
     public UserResponse updateUser(Long userId, UserDTO newInfoUser) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        user.setUserName(newInfoUser.getUserName());
+        user.setEmail(newInfoUser.getEmail());
+        user.setFullName(newInfoUser.getFullName());
+        user.setDayOfBirth(newInfoUser.getDayOfBirth());
+
+        return UserMapper.mapToUserResponse(userRepository.save(user));
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        userRepository.deleteById(userId);
+        log.info("User with ID {} has been deleted", userId);
+    }
+
+    @Override
+    public UserResponse setStatusAccount(Long userId, String decision) {
         return null;
     }
 
     @Override
-    public void deleteUser(Long userId) {
-
+    public UserResponse setRole(Long userId, String role) {
+        return null;
     }
 
-    @Override
-    public List<UserResponse> getAllUser() {
-        return List.of();
-    }
-
-    @Override
-    public
 }

@@ -23,22 +23,40 @@ public class UserController {
         apiResponse.setResult(userService.register(userDTO, userRoleChoice));
         return apiResponse;
     }
+
     @GetMapping("/getUsers")
     public ApiResponse<List<UserResponse>> getAllUser() {
         ApiResponse<List<UserResponse>> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.getAllUser());
         return apiResponse;
     }
+
     @GetMapping("{id}")
     public ApiResponse<UserResponse> getUser(@PathVariable("id") Long userId) {
         ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.getUser(userId));
         return apiResponse;
     }
+
     @GetMapping("/myInfo")
     public ApiResponse<UserResponse> getMyInfo() {
         ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.getMyInfo());
+        return apiResponse;
+    }
+
+    @PostMapping("/updateUser/{userId}")
+    public ApiResponse<UserResponse> updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid UserDTO newInfoUser) {
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.updateUser(userId, newInfoUser));
+        return apiResponse;
+    }
+
+    @DeleteMapping("/deleteUser/{userId}")
+    public ApiResponse<String> deleteUser(@PathVariable("userId") Long userId) {
+        userService.deleteUser(userId);
+        ApiResponse<String> apiResponse = new ApiResponse<>();
+        apiResponse.setResult("User deleted successfully");
         return apiResponse;
     }
 }

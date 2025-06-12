@@ -12,4 +12,6 @@ public interface UserService {
     UserResponse updateUser(Long userId, UserDTO newInfoUser);
     void deleteUser(Long userId);
     List<UserResponse> getAllUser();
+    UserResponse setStatusAccount(Long userId, String decision);
+    UserResponse setRole(Long userId, String role);
 }
