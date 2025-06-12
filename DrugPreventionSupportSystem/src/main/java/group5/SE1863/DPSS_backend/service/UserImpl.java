@@ -14,11 +14,13 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -49,7 +51,7 @@ public class UserImpl implements UserService {
                     });
             roles.add(role);
             user.setRoles(roles);
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new AppException(ErrorCode.INVALID_ROLE);
         }
         User savedUser = userRepository.save(user);
@@ -64,5 +66,32 @@ public class UserImpl implements UserService {
         return UserMapper.mapToUserResponse(user);
     }
 
+    @Override
+    public UserResponse getMyInfo() {
+        var context = SecurityContextHolder.getContext();
+        Long userId = Long.valueOf(context.getAuthentication().getName());
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return UserMapper.mapToUserResponse(user);
+
+    }
+
+    @Override
+    public UserResponse updateUser(Long userId, UserDTO newInfoUser) {
+        return null;
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+
+    }
+
+    @Override
+    public List<UserResponse> getAllUser() {
+        return List.of();
+    }
+
+    @Override
+    public
 }

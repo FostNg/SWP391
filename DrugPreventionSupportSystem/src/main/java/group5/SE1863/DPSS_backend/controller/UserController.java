@@ -29,4 +29,16 @@ public class UserController {
         apiResponse.setResult(userService.getAllUser());
         return apiResponse;
     }
+    @GetMapping("{id}")
+    public ApiResponse<UserResponse> getUser(@PathVariable("id") Long userId) {
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.getUser(userId));
+        return apiResponse;
+    }
+    @GetMapping("/myInfo")
+    public ApiResponse<UserResponse> getMyInfo() {
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.getMyInfo());
+        return apiResponse;
+    }
 }
