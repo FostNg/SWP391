@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @RestController
 @CrossOrigin
@@ -19,6 +21,12 @@ public class UserController {
     public ApiResponse<UserResponse> register(@RequestBody @Valid UserDTO userDTO, @RequestParam String userRoleChoice) {
         ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.register(userDTO, userRoleChoice));
+        return apiResponse;
+    }
+    @GetMapping("/getUsers")
+    public ApiResponse<List<UserResponse>> getAllUser() {
+        ApiResponse<List<UserResponse>> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.getAllUser());
         return apiResponse;
     }
 }
