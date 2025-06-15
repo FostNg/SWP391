@@ -2,6 +2,7 @@ package group5.SE1863.DPSS_backend.service;
 
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.SignedJWT;
+import group5.SE1863.DPSS_backend.dto.request.CheckPasswordRequest;
 import group5.SE1863.DPSS_backend.dto.request.LogoutRequest;
 import group5.SE1863.DPSS_backend.dto.request.VerifyTokenRequest;
 import group5.SE1863.DPSS_backend.dto.response.TokenResponse;
@@ -25,6 +26,7 @@ import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -194,6 +196,18 @@ public class AuthenticationService {
         TrackingUserResponse trackingUserResponse = new TrackingUserResponse();
         trackingUserResponse.setUserCount(count);
         return trackingUserResponse;
+    }
+
+    public String checkPassword(CheckPasswordRequest request) {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        // Check password
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        boolean checking = passwordEncoder.matches(request.getOldPassword(),user.getPassword());
+        if (checking) {
+            return "Correct password";
+        }
+        return "Incorrect password";
     }
 
 }
