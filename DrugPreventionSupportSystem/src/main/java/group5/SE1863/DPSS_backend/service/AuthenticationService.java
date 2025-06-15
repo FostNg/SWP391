@@ -2,14 +2,11 @@ package group5.SE1863.DPSS_backend.service;
 
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.SignedJWT;
-import group5.SE1863.DPSS_backend.dto.request.CheckPasswordRequest;
-import group5.SE1863.DPSS_backend.dto.request.LogoutRequest;
-import group5.SE1863.DPSS_backend.dto.request.VerifyTokenRequest;
+import group5.SE1863.DPSS_backend.dto.request.*;
 import group5.SE1863.DPSS_backend.dto.response.TokenResponse;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
-import group5.SE1863.DPSS_backend.dto.request.AuthenticationRequest;
 import group5.SE1863.DPSS_backend.dto.response.AuthenticationResponse;
 import group5.SE1863.DPSS_backend.dto.response.TrackingUserResponse;
 import group5.SE1863.DPSS_backend.dto.response.VerifyTokenResponse;
@@ -203,9 +200,23 @@ public class AuthenticationService {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         // Check password
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        boolean checking = passwordEncoder.matches(request.getOldPassword(),user.getPassword());
+        boolean checking = passwordEncoder.matches(request.getOldPassword(), user.getPassword());
         if (checking) {
             return "Correct password";
+        }
+        return "Incorrect password";
+    }
+
+    public String changePassword(ChangePasswordRequest request) {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        // Check password
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        boolean checking = passwordEncoder.matches(request.getNewPassword(), user.getPassword());
+        if (checking) {
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            userRepository.save(user);
+            return "Change password successfully";
         }
         return "Incorrect password";
     }

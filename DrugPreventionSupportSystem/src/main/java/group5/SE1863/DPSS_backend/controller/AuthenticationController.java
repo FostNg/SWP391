@@ -1,10 +1,7 @@
 package group5.SE1863.DPSS_backend.controller;
 
 import com.nimbusds.jose.JOSEException;
-import group5.SE1863.DPSS_backend.dto.request.AuthenticationRequest;
-import group5.SE1863.DPSS_backend.dto.request.CheckPasswordRequest;
-import group5.SE1863.DPSS_backend.dto.request.LogoutRequest;
-import group5.SE1863.DPSS_backend.dto.request.VerifyTokenRequest;
+import group5.SE1863.DPSS_backend.dto.request.*;
 import group5.SE1863.DPSS_backend.dto.response.AuthenticationResponse;
 import group5.SE1863.DPSS_backend.dto.response.TrackingUserResponse;
 import group5.SE1863.DPSS_backend.dto.response.VerifyTokenResponse;
@@ -67,5 +64,11 @@ public class AuthenticationController {
         return apiResponse;
     }
 
+    @GetMapping("/user/changePassword")
+    public ApiResponse<String> changePassword(@RequestParam ChangePasswordRequest request) {
+        ApiResponse<String> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(authenticationService.changePassword(request));
+        return apiResponse;
+    }
 
 }
