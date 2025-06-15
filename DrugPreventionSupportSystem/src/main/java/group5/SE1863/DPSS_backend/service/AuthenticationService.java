@@ -30,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -60,35 +61,45 @@ public class AuthenticationService {
         if (!authenticated || !status) throw new AppException(ErrorCode.UNAUTHENDICATED);
 
         // Create authentication response
-        TokenResponse token = generateToken(user);
+        String token = generateToken(user);
+//        TokenResponse token = generateToken(user);
+//        AuthenticationResponse authRes = new AuthenticationResponse();
+//
+//        authRes.setToken(token.getToken());
+//        authRes.setAuthenticated(true);
+//        trackingLogin(user, token.getExpirationTime());
         AuthenticationResponse authRes = new AuthenticationResponse();
-
-        authRes.setToken(token.getToken());
+        authRes.setToken(token);
         authRes.setAuthenticated(true);
-        trackingLogin(user, token.getExpirationTime());
         return authRes;
     }
 
-    private TokenResponse generateToken(User user) {
-        // Create a new TokenResponse
-        JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
-        // Create payload
-        JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().subject(String.valueOf(user.getUserId())).issuer("DPSS_backend.com").issueTime(new Date()).expirationTime(new Date(
-                        //Set time for token
-                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli() // expired in 1 hour
-                )).jwtID(UUID.randomUUID().toString()) // Set JWT ID
-                .claim("scope", buildScope(user)) // Add scope
-                .build();
-        // Set token in tokenResponse
-        Payload payload = new Payload(jwtClaimsSet.toJSONObject());
-
-        JWSObject jwsObject = new JWSObject(jwsHeader, payload);
+    private String generateToken(User user) {
         try {
-            jwsObject.sign(new MACSigner(SIGNAL_KEY.getBytes()));
-            return new TokenResponse(jwsObject.serialize(), jwtClaimsSet.getExpirationTime());
+            // Create JWT header
+            JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
+
+            // Create JWT payload (claims)
+            JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+                    .subject(String.valueOf(user.getUserId())) // Set subject as userId
+                    .issuer("DPSS.com") // Set issuer
+                    .issueTime(new Date()) // Set token issued time
+                    .expirationTime(Date.from(Instant.now().plusSeconds(3600))) // Token expires after 1 hour
+                    .jwtID(UUID.randomUUID().toString()) // Generate unique token ID
+                    .claim("scope", buildScope(user)) // Set user roles as scope
+                    .build();
+
+            // Create signed JWT
+            SignedJWT signedJWT = new SignedJWT(jwsHeader, claimsSet);
+
+            // Sign the JWT with the secret key
+            signedJWT.sign(new MACSigner(SIGNAL_KEY.getBytes()));
+
+            // Return serialized token
+            return signedJWT.serialize();
         } catch (JOSEException e) {
-            log.error("Cannot create token", e);
-            throw new RuntimeException(e);
+            log.error("Error generating token", e);
+            throw new RuntimeException("Error generating token", e);
         }
     }
 
@@ -145,18 +156,21 @@ public class AuthenticationService {
     }
 
     private SignedJWT tokenCheck(String token) throws JOSEException, ParseException {
-        JWSVerifier verifier = new MACVerifier(SIGNAL_KEY.getBytes());
-        SignedJWT signedJWT = SignedJWT.parse(token);
-        Date expityTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
-        var verified = signedJWT.verify(verifier);
-        // Check if the token is verified and not expired
-        if (!verified || expityTime.after(new Date())) {
+        JWSVerifier verifier = new MACVerifier(SIGNAL_KEY.getBytes());
+
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        Date expityTime = signedJWT.getJWTClaimsSet().getExpirationTime(); // Check date expired of token
+        var verified = signedJWT.verify(verifier); // check token sign from request equal to token signKey we create in application.properties
+
+        //Check token date and data of token
+        if (!(verified && expityTime.after(new Date())))
             throw new AppException(ErrorCode.UNAUTHENDICATED);
-        }
-        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID())) {
-            throw new AppException(ErrorCode.UNAUTHENDICATED);
-        }
+
+        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+
         return signedJWT;
     }
 
@@ -181,4 +195,5 @@ public class AuthenticationService {
         trackingUserResponse.setUserCount(count);
         return trackingUserResponse;
     }
+
 }

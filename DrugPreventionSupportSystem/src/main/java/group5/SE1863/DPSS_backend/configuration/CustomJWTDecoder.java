@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.text.ParseException;
+import java.util.Objects;
 
 @Component
 public class CustomJWTDecoder implements JwtDecoder {
@@ -26,19 +27,23 @@ public class CustomJWTDecoder implements JwtDecoder {
 
     private NimbusJwtDecoder nimbusJwtDecoder = null;
 
-    public Jwt decode(String token) {
-        // Check token validity
+    public Jwt decode(String token){
+        //Check token valid
         try {
+
             VerifyTokenRequest verifyTokenRequest = new VerifyTokenRequest();
             verifyTokenRequest.setToken(token);
             var response = authenticationService.verifyToken(verifyTokenRequest);
             if (!response.isValid()) throw new JwtException("This token is invalid");
-        } catch (JOSEException | ParseException e) {
+        }catch (JOSEException| ParseException e){
             throw new JwtException(e.getMessage());
         }
 
-        if (nimbusJwtDecoder == null) {
-            SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNAL_KEY.getBytes(), "HS512");
+        if (Objects.isNull(nimbusJwtDecoder)){
+
+            // SecretKeySpec with 2 param: our signerKey from application.properties and algorithm that we are using to create token header
+            SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNAL_KEY.getBytes(),"HS512");
+
             nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(secretKeySpec)
                     .macAlgorithm(MacAlgorithm.HS512)
                     .build();

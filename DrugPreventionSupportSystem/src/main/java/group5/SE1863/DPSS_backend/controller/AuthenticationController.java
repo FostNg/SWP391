@@ -2,16 +2,15 @@ package group5.SE1863.DPSS_backend.controller;
 
 import com.nimbusds.jose.JOSEException;
 import group5.SE1863.DPSS_backend.dto.request.AuthenticationRequest;
+import group5.SE1863.DPSS_backend.dto.request.LogoutRequest;
 import group5.SE1863.DPSS_backend.dto.request.VerifyTokenRequest;
 import group5.SE1863.DPSS_backend.dto.response.AuthenticationResponse;
+import group5.SE1863.DPSS_backend.dto.response.TrackingUserResponse;
 import group5.SE1863.DPSS_backend.dto.response.VerifyTokenResponse;
 import group5.SE1863.DPSS_backend.entity.ApiResponse;
 import group5.SE1863.DPSS_backend.service.AuthenticationService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
@@ -34,6 +33,7 @@ public class AuthenticationController {
 
         return apiResponse;
     }
+
     @PostMapping("/verifyToken")
     ApiResponse<VerifyTokenResponse> authenticate(@RequestBody VerifyTokenRequest request) throws ParseException, JOSEException {
         var result = authenticationService.verifyToken(request);
@@ -41,6 +41,21 @@ public class AuthenticationController {
         verifyTokenResponse.setValid(result.isValid());
         ApiResponse<VerifyTokenResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(verifyTokenResponse);
+        return apiResponse;
+    }
+
+    @PostMapping("/logout")
+    ApiResponse<String> logoutUser(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return new ApiResponse<>();
+    }
+
+    @GetMapping("/trackingLogin")
+    public ApiResponse<TrackingUserResponse> countLogin() {
+
+        ApiResponse<TrackingUserResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(authenticationService.countLoginUser());
+
         return apiResponse;
     }
 }

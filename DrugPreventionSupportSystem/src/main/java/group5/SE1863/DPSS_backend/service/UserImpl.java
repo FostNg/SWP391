@@ -149,5 +149,6 @@ public class UserImpl implements UserService {
 
         userRepository.save(user);
         return userMapper.mapToUserResponse(user);
-
     }
+
+}

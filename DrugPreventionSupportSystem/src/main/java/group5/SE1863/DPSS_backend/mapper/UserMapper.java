@@ -21,12 +21,13 @@ public class UserMapper {
                 user.getUserName(),
                 user.getPassword(),
                 user.getEmail(),
-                user.isStatus(),
                 user.getFullName(),
-                user.getDayOfBirth()
+                user.getDayOfBirth(),
+                user.isStatus()
 
         );
     }
+
     public static User mapToUser(UserDTO userDto) {
         return new User(
                 userDto.getUserId(),
@@ -40,6 +41,7 @@ public class UserMapper {
 
         );
     }
+
     public static UserResponse mapToUserResponse(User user) {
         Set<RoleResponse> role = (user.getRoles() != null)
                 ? user.getRoles().stream()

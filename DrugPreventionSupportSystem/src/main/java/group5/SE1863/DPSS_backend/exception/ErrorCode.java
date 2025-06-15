@@ -15,7 +15,7 @@ public enum ErrorCode {
     INVALID_USERID(1003, "This userID is not existed", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED(1004, "User invalid(please check your username or your password)", HttpStatus.NOT_FOUND),
     UNAUTHENDICATED(1005, "Unauthenticated", HttpStatus.UNAUTHORIZED),
-
+    UNAUTHORIZED(1006,"You do not have permission for this function",HttpStatus.FORBIDDEN),
 
     INVALID_INFOMATION(1007, "You need to check your information that it do not duplicated", HttpStatus.BAD_REQUEST),
     ;
