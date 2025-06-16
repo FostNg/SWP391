@@ -45,7 +45,7 @@ public class UserController {
         return apiResponse;
     }
 
-    @PostMapping("/updateUser/{userId}")
+    @PutMapping("/updateUser/{userId}")
     public ApiResponse<UserResponse> updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid UserDTO newInfoUser) {
         ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.updateUser(userId, newInfoUser));
@@ -59,7 +59,7 @@ public class UserController {
         apiResponse.setResult("User deleted successfully");
         return apiResponse;
     }
-    @PostMapping("/setStatusAccount/{userId}")
+    @PutMapping("/setStatusAccount/{userId}")
     public ApiResponse<UserResponse> setActiveAccount(@PathVariable("userId") Long userId, @RequestParam String decision) {
         ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.setStatusAccount(userId, decision));

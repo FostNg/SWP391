@@ -33,7 +33,10 @@ public class SecurityConfig {
             "/auth/login",
             "/auth/verifyToken",
             "/api/register",
-            "/auth/logout"
+            "/auth/logout",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
     };
 
     @Bean
