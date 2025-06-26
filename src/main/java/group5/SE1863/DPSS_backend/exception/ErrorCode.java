@@ -18,20 +18,11 @@ public enum ErrorCode {
     UNAUTHORIZED(1006,"You do not have permission for this function",HttpStatus.FORBIDDEN),
 
     INVALID_INFOMATION(1007, "You need to check your information that it do not duplicated", HttpStatus.BAD_REQUEST),
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> c13caca1fbbda71aeabe2ca4a58351d1d892b42e
     INVALID_COURSEID(1008, "This courseID is not existed", HttpStatus.BAD_REQUEST),
     ALREADY_REGISTERED(1009, "You have already registered for this course", HttpStatus.BAD_REQUEST),
     INVALID_ASSESSMENT_ID(1010, "This assessment ID is not existed", HttpStatus.BAD_REQUEST),
     INVALID_ANSWER(1011, "This answer is not existed", HttpStatus.BAD_REQUEST),
     NOT_FOUND(1012, "Not found", HttpStatus.NOT_FOUND),
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 894443c9ff4b67cf1ef6c3069f10aad3f5892c01
->>>>>>> c13caca1fbbda71aeabe2ca4a58351d1d892b42e
     ;
 
 
