@@ -13,7 +13,10 @@ public class AppException extends RuntimeException {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
+<<<<<<< HEAD
 
     public AppException(com.google.firebase.ErrorCode errorCode) {
     }
+=======
+>>>>>>> 894443c9ff4b67cf1ef6c3069f10aad3f5892c01
 }

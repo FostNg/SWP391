@@ -8,12 +8,16 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+<<<<<<< HEAD
 
+=======
+>>>>>>> 894443c9ff4b67cf1ef6c3069f10aad3f5892c01
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
     private int code = 1010;
     private String message;
     private T result;
+<<<<<<< HEAD
 
     public static <T> ApiResponse<T> success(T result) {
         ApiResponse<T> response = new ApiResponse<>();
@@ -29,4 +33,6 @@ public class ApiResponse<T> {
         response.setMessage(message);
         return response;
     }
+=======
+>>>>>>> 894443c9ff4b67cf1ef6c3069f10aad3f5892c01
 }

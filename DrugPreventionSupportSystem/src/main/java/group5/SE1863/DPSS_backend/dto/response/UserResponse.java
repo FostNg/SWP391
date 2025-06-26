@@ -18,7 +18,11 @@ public class UserResponse {
     private String userName;
     private String email;
     private String fullName;
+<<<<<<< HEAD
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+=======
+    @JsonFormat(pattern = "dd/MM/yyyy")
+>>>>>>> 894443c9ff4b67cf1ef6c3069f10aad3f5892c01
     LocalDate dayOfBirth;
     private boolean status;
     private Set<RoleResponse> roles;
