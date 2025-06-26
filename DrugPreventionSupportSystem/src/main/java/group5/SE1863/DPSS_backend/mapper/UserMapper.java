@@ -8,7 +8,14 @@ import lombok.Builder;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
+<<<<<<< HEAD
 import java.util.ArrayList;
+=======
+<<<<<<< HEAD
+import java.util.ArrayList;
+=======
+>>>>>>> 894443c9ff4b67cf1ef6c3069f10aad3f5892c01
+>>>>>>> c13caca1fbbda71aeabe2ca4a58351d1d892b42e
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,6 +37,10 @@ public class UserMapper {
     }
 
     public static User mapToUser(UserDTO userDto) {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> c13caca1fbbda71aeabe2ca4a58351d1d892b42e
         User user = new User();
         user.setUserId(userDto.getUserId());
         user.setUserName(userDto.getUserName());
@@ -39,6 +50,22 @@ public class UserMapper {
         user.setDayOfBirth(userDto.getDayOfBirth());
         user.setStatus(userDto.isStatus());
         return user;
+<<<<<<< HEAD
+=======
+=======
+        return new User(
+                userDto.getUserId(),
+                userDto.getUserName(),
+                userDto.getPassword(),
+                userDto.getEmail(),
+                userDto.getFullName(),
+                userDto.getDayOfBirth(),
+                userDto.isStatus(),
+                null
+
+        );
+>>>>>>> 894443c9ff4b67cf1ef6c3069f10aad3f5892c01
+>>>>>>> c13caca1fbbda71aeabe2ca4a58351d1d892b42e
     }
 
     public static UserResponse mapToUserResponse(User user) {
