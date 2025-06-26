@@ -1,0 +1,12 @@
+package group5.SE1863.DPSS_backend.repository;
+
+import group5.SE1863.DPSS_backend.entity.RoleDetail;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface RoleRepository extends JpaRepository<RoleDetail, Long> {
+    Optional<RoleDetail> findByRoleType(String roleType);
+}
